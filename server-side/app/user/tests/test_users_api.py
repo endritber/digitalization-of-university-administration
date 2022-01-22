@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
+import datetime
 
 CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
@@ -16,17 +17,34 @@ class PublicUsersApiTests(TestCase):
     Test the users API (public)
     """
     def setUp(self):
+        self.user = create_user(
+            email='administrator@gmail.com',
+            password='testpass123',
+            name='administrator',
+            role=1,
+            phone_number='+38349758152',
+            city='Prishtine',
+            date_of_birth = datetime.date(2001, 5, 31),
+            gender='M'
+
+        )
         self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
     
     def test_create_valid_user_success(self):
         """
         Test creating user with valid payload is successful
         """
         payload = {
-            'email': 'test@gmail.com',
+            'email': 'student@gmail.com',
             'password':'testpass123',
-            'name': 'Test name',
-            'role':1
+            'name': 'Student name',
+            'role':3,
+            'phone_number':'+38349758152',
+            'city':'Prishtine',
+            'date_of_birth':datetime.date(2001, 5, 31),
+            'gender':'M',
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
@@ -112,6 +130,7 @@ class PublicUsersApiTests(TestCase):
         """
         Test that authentication is required for users
         """
+        self.client.logout()
         res = self.client.get(ME_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -124,7 +143,12 @@ class PrivateUserApiTests(TestCase):
             email='test@gmail.com',
             password='testpass',
             name='name',
-            role=1
+            role=1,
+            phone_number='+38349758152',
+            city='Prishtine',
+            date_of_birth = datetime.date(2001, 5, 31),
+            gender='M'
+
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -137,9 +161,13 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, {
             'id':self.user.id,
-            'name':self.user.name,
             'email':self.user.email,
-            'role':self.user.role
+            'name':self.user.name,
+            'role':self.user.role,
+            'date_of_birth':self.user.date_of_birth.isoformat(),
+            'phone_number':self.user.phone_number,
+            'gender':self.user.gender,
+            'city':self.user.city,
         })
     
     def test_post_me_not_allowed(self):
