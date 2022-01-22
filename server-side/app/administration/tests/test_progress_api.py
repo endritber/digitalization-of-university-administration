@@ -24,7 +24,8 @@ class PrivateProgressApiTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             'test@university.com',
-            'password123'
+            'password123',
+            3,
         )
         self.client = APIClient()
         self.client.force_authenticate(self.user)
@@ -36,6 +37,7 @@ class PrivateProgressApiTests(TestCase):
         progress = Progress.objects.all()
         serializer = ProgressSerializer(progress, many=True)
 
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
@@ -43,7 +45,8 @@ class PrivateProgressApiTests(TestCase):
         """Test that progress returned for the authenticated user"""
         user2 = get_user_model().objects.create_user(
             'other@gmail.com',
-            'testpass123'
+            'testpass123',
+            3,
         )
         Progress.objects.create(user=user2, degree='Master')
         progress = Progress.objects.create(user=self.user, degree='Bachelor')
@@ -52,4 +55,3 @@ class PrivateProgressApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data[0]['degree'], progress.degree)
-
