@@ -2,7 +2,7 @@ from .serializers import UserSerializer, AuthTokenSerializer
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
-
+from user.permissions import AdministratorOrReadOnly
 
 class CreateUserView(generics.CreateAPIView):
     """
@@ -17,13 +17,14 @@ class CreateTokenView(ObtainAuthToken):
     serializer_class = AuthTokenSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
+
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """
     Manage the authenticated user
     """
     serializer_class = UserSerializer
     authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, AdministratorOrReadOnly)
 
     def get_object(self):
         """

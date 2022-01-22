@@ -4,6 +4,10 @@ from django.contrib.auth import get_user_model
 from core import models
 
 
+def sample_user(email='student@university.com', password='student12345'):
+    """Create a sample user for authorization"""
+    return get_user_model().objects.create_user(email, password)
+
 class ModelTests(TestCase):
     def test_create_user_with_email_successful(self):
         """
@@ -45,3 +49,11 @@ class ModelTests(TestCase):
         )
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_progress_str(self):
+        """Test the progress string representation"""
+        progress = models.Progress.objects.create(
+            user=sample_user(),
+            degree='Bachelor'
+        )
+        self.assertEqual(str(progress), progress.user.name)
