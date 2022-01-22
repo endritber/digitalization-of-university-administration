@@ -48,7 +48,7 @@ class PrivateProgressApiTests(TestCase):
             'testpass123',
             1,
         )
-        Progress.objects.create(user=user2, degree='Master')
+        Progress.objects.create(user=user2, degree='Bachelor')
         progress = Progress.objects.create(user=self.user, degree='Bachelor')
         print(progress)
         res = self.client.get(PROGRESS_URL)
