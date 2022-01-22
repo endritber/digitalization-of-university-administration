@@ -2,14 +2,13 @@ from .serializers import UserSerializer, AuthTokenSerializer
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
-from django.contrib.auth import get_user_model
+from user.permissions import AdministratorOrReadOnly
 
 class CreateUserView(generics.CreateAPIView):
     """
     Create a new user in the system
     """
     serializer_class = UserSerializer
-
 
 class CreateTokenView(ObtainAuthToken):
     """
@@ -25,7 +24,7 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
     """
     serializer_class = UserSerializer
     authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, AdministratorOrReadOnly)
 
     def get_object(self):
         """

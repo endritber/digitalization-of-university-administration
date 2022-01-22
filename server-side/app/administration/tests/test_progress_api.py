@@ -23,9 +23,9 @@ class PrivateProgressApiTests(TestCase):
     """Test the authorized user tags API"""
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            'test@university.com',
+            'administrator@university.com',
             'password123',
-            3,
+            1,
         )
         self.client = APIClient()
         self.client.force_authenticate(self.user)
@@ -44,9 +44,9 @@ class PrivateProgressApiTests(TestCase):
     def test_progress_limited_to_user(self):
         """Test that progress returned for the authenticated user"""
         user2 = get_user_model().objects.create_user(
-            'other@gmail.com',
+            'administrator1@university.com',
             'testpass123',
-            3,
+            1,
         )
         Progress.objects.create(user=user2, degree='Master')
         progress = Progress.objects.create(user=self.user, degree='Bachelor')
@@ -55,3 +55,23 @@ class PrivateProgressApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data[0]['degree'], progress.degree)
+
+    def test_create_progress_successful(self):
+        """Test creating progress for a student"""
+        payload = {'degree':'Bachelor', 'user':self.user.id}
+        self.client.post(PROGRESS_URL, payload)
+
+        exists = Progress.objects.filter(
+            user = self.user,
+            degree = payload['degree']
+        ).exists()
+
+        self.assertTrue(exists)
+
+    def test_create_progress_invalid(self):
+        """Test creating a new progress with invalid payload"""
+
+        payload = {'degree':''}
+        res = self.client.post(PROGRESS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

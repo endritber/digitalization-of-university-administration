@@ -4,9 +4,8 @@ from user.serializers import UserSerializer
 
 class ProgressSerializer(serializers.ModelSerializer):
     """Serializer for Progress objects"""
-    user = UserSerializer()
     class Meta:
         model = Progress
-        fields = ('id', 'degree', 'user')
-        read_only_fields = ('id','user')
+        fields = '__all__'
+        read_only_fields = ('id',)
         
