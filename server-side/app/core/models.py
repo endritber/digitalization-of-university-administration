@@ -75,11 +75,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Progress(models.Model):
     """Progress to be used for a student"""
-    degree = models.CharField(max_length=255)
+    level = models.CharField(max_length=255, null=True, blank=True)
+    department = models.CharField(max_length=255, null=True, blank=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE,
     )
 
     def __str__(self):
-        return self.user.name
-
+        return self.user.email + " | Academic Progress"

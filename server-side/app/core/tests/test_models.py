@@ -54,6 +54,9 @@ class ModelTests(TestCase):
         """Test the progress string representation"""
         progress = models.Progress.objects.create(
             user=sample_user(),
-            degree='Bachelor'
+            department='CSE',
+            level='Bachelor'
         )
-        self.assertEqual(str(progress), progress.user.name)
+        print(str(progress))
+        print(progress.user.email+ " | Academic Progress")
+        self.assertEqual(str(progress), progress.user.email + " | Academic Progress")

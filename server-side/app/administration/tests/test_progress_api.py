@@ -32,7 +32,7 @@ class PrivateProgressApiTests(TestCase):
     
     def test_retrieve_progress(self):
         """Test retrieve student progress"""
-        Progress.objects.create(user=self.user, degree='Bachelor')
+        Progress.objects.create(user=self.user, department='CSE', level='Bachelor')
         res = self.client.get(PROGRESS_URL)
         progress = Progress.objects.all()
         serializer = ProgressSerializer(progress, many=True)
@@ -48,22 +48,23 @@ class PrivateProgressApiTests(TestCase):
             'testpass123',
             1,
         )
-        Progress.objects.create(user=user2, degree='Bachelor')
-        progress = Progress.objects.create(user=self.user, degree='Bachelor')
-        print(progress)
+        Progress.objects.create(user=user2, level='Bachelor', department='CSE')
+        progress = Progress.objects.create(user=self.user, level='Bachelor', department='CSE')
         res = self.client.get(PROGRESS_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data[0]['degree'], progress.degree)
+        self.assertEqual(res.data[0]['department'], progress.department)
+        self.assertEqual(res.data[0]['level'], progress.level)
 
     def test_create_progress_successful(self):
         """Test creating progress for a student"""
-        payload = {'degree':'Bachelor', 'user':self.user.id}
+        payload = {'level':'Bachelor','department':'Computer Science and Engineering', 'user':self.user.id}
         self.client.post(PROGRESS_URL, payload)
 
         exists = Progress.objects.filter(
             user = self.user,
-            degree = payload['degree']
+            level = payload['level'],
+            department = payload['department']
         ).exists()
 
         self.assertTrue(exists)
@@ -71,7 +72,7 @@ class PrivateProgressApiTests(TestCase):
     def test_create_progress_invalid(self):
         """Test creating a new progress with invalid payload"""
 
-        payload = {'degree':''}
+        payload = {'department':''}
         res = self.client.post(PROGRESS_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
