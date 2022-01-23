@@ -23,9 +23,15 @@ class PublicUsersApiTests(TestCase):
             name='administrator',
             role=1,
             phone_number='+38349758152',
-            city='Prishtine',
             date_of_birth = datetime.date(2001, 5, 31),
-            gender='M'
+            gender='M',
+            identity_card_number=1174589123,
+            parent_name='Marin',
+            place_of_birth='Prishtine',
+            address='Aktash, Agim Ramadani B1/4',
+            country='Kosove',
+            nationality='Shqiptar',
+            settlement='Prishtine',
 
         )
         self.client = APIClient()
@@ -42,9 +48,15 @@ class PublicUsersApiTests(TestCase):
             'name': 'Student name',
             'role':3,
             'phone_number':'+38349758152',
-            'city':'Prishtine',
             'date_of_birth':datetime.date(2001, 5, 31),
             'gender':'M',
+            'identity_card_number':1174589123,
+            'parent_name':'Marin',
+            'place_of_birth':'Prishtine',
+            'address':'Aktash, Agim Ramadani B1/4',
+            'country':'Kosove',
+            'nationality':'Shqiptar',
+            'settlement':'Prishtine',
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
@@ -145,11 +157,18 @@ class PrivateUserApiTests(TestCase):
             name='name',
             role=1,
             phone_number='+38349758152',
-            city='Prishtine',
             date_of_birth = datetime.date(2001, 5, 31),
-            gender='M'
+            gender='M',
+            identity_card_number=1174589123,
+            parent_name='Marin',
+            place_of_birth='Prishtine',
+            address='Aktash, Agim Ramadani B1/4',
+            country='Kosove',
+            nationality='Shqiptar',
+            settlement='Prishtine',
 
         )
+            
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
@@ -167,7 +186,13 @@ class PrivateUserApiTests(TestCase):
             'date_of_birth':self.user.date_of_birth.isoformat(),
             'phone_number':self.user.phone_number,
             'gender':self.user.gender,
-            'city':self.user.city,
+            'identity_card_number':self.user.identity_card_number,
+            'parent_name':self.user.parent_name,
+            'place_of_birth':self.user.place_of_birth,
+            'address':self.user.address,
+            'country':self.user.country,
+            'nationality':self.user.nationality,
+            'settlement':self.user.settlement,
         })
     
     def test_post_me_not_allowed(self):

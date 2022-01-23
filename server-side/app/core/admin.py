@@ -8,7 +8,8 @@ class UserAdmin(BaseUserAdmin):
     list_display = ['email', 'name']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('name','role', 'date_of_birth', 'phone_number', 'gender', 'city')}),
+        (_('Personal Info'), {'fields': ('name','role', 'date_of_birth', 'phone_number', 'gender',
+         'identity_card_number', 'parent_name', 'place_of_birth', 'address', 'country', 'nationality', 'settlement')}),
         (
             _('Permissions'),
             {
