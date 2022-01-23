@@ -1,8 +1,8 @@
-from re import A
-from django.db import models
+from django.db import IntegrityError, models
 from django.contrib.auth.models import (AbstractBaseUser,
                          BaseUserManager, PermissionsMixin)
 from django.conf import settings
+from django.forms import ValidationError
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, date_of_birth =None,
@@ -72,14 +72,67 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
     USERNAME_FIELD = 'email'
 
+class Course(models.Model):
+    course_code = models.CharField(max_length=255)
+    course_name = models.CharField(max_length=255)
+    ects = models.IntegerField()
+    category = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.course_code + ' | '+self.course_name
+
+class CourseGrade(models.Model):
+    grade = models.IntegerField(null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.email + " | "+str(self.grade) + " | "+self.course.course_name
+
+    def save(self,*args,**kwargs):
+        created = not self.pk
+        super().save(*args,**kwargs)
+        if created:
+            try:
+                t = Transcript.objects.get(user=self.user)
+                t.grade_courses.add(CourseGrade.objects.get(id=self.id))
+                t.save()
+            except:
+                raise ValidationError('You are trying to add a grade to a student without transcript or to a non student. Make sure the administrator has added a progress for this student.')
+
+
+class Transcript(models.Model):
+    grade_courses = models.ManyToManyField(CourseGrade, related_name='grade_courses')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+    on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.user.email + "'s Transcript"
+
 
 class Progress(models.Model):
     """Progress to be used for a student"""
     level = models.CharField(max_length=255, null=True, blank=True)
     department = models.CharField(max_length=255, null=True, blank=True)
+    transcript = models.OneToOneField(Transcript, on_delete=models.CASCADE, null=True, blank=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE,
     )
+    def save(self,*args,**kwargs):
+        created = not self.pk
+        super().save(*args,**kwargs)
+        if created:
+            try:
+                t = Transcript.objects.create(user=self.user)
+                t.save()
+                p = Progress.objects.get(id=self.id)
+                p.transcript = Transcript.objects.get(user=self.user)
+                print(p.transcript)
+                p.save()
+            except IntegrityError:
+                pass
+
 
     def __str__(self):
         return self.user.email + " | Academic Progress"

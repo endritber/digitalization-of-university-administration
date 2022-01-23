@@ -10,7 +10,7 @@ class CreateUserView(generics.ListCreateAPIView):
     Create a new user in the system
     """
     serializer_class = UserSerializer
-    queryset = get_user_model().objects.filter(role=3)
+    queryset = get_user_model().objects.exclude(role=1).exclude(role=None).order_by('role')
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, AdministratorOrReadOnly)
 
@@ -19,7 +19,7 @@ class RetrieveUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, AdministratorOrReadOnly)
-    queryset = get_user_model().objects.filter(role=3)
+    queryset = get_user_model().objects.exclude(role=1).exclude(role=None).order_by('role')
 
 
 

@@ -1,11 +1,13 @@
-from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from core.models import Progress
+from django.contrib.auth import get_user_model
+from core.models import Progress, CourseGrade, Course
 from administration import serializers
-from administration.permissions import AdministratorOrReadOnly
-from rest_framework.response import Response
+from administration.permissions import AdministratorOrReadOnly, ProfessorPermission
+from rest_framework import generics
 
 class ProgressViewSet(viewsets.GenericViewSet,
                      mixins.ListModelMixin,
@@ -24,12 +26,43 @@ class ProgressViewSet(viewsets.GenericViewSet,
             return self.queryset.filter(user=self.request.user)
         else:
             return self.queryset.all()
-    # def retrieve(self, request, *args, **kwargs):
-    #     queryset = Progress.objects.all()
-    #     progress = get_object_or_404(queryset, user=self.kwargs['pk'])
-    #     serializer = self.get_serializer(progress)
-    #     return Response(serializer.data)
 
-    # def update(self, request, *args, **kwargs):
-    #     return super().update(request, *args, **kwargs)
- 
+    def create(self, request, *args, **kwargs):
+        id = self.request.data['user']
+        user = get_user_model().objects.get(id=id)
+        if user.role == 2 or user.role == 1 or user.role == None:
+            return Response({'detail':'You cannot add a progress other than a student'}, status=status.HTTP_403_FORBIDDEN)
+        return super().create(request, *args, **kwargs)
+
+class GradeApiView(generics.CreateAPIView):
+    """Manage Grade for student"""
+
+    serializer_class = serializers.CourseGradeSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, ProfessorPermission)
+    queryset = CourseGrade.objects.all()
+
+    def perform_create(self, serializer):
+        pk = self.kwargs.get('pk')
+        user = get_user_model().objects.get(pk=pk)
+        if CourseGrade.objects.filter(user=user, course=self.request.data['course']).exists():
+            return Response({'detail':'This student already has a grade to this course.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer.save(user=user)
+
+class CourseApiView(generics.ListAPIView,):
+    """Courses for student"""
+
+    serializer_class = serializers.CourseSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, ProfessorPermission)
+    queryset = Course.objects.all()
+
+class CourseDetailApiView(generics.RetrieveAPIView):
+    """Courses for student"""
+
+    serializer_class = serializers.CourseSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, ProfessorPermission)
+    queryset = Course.objects.all()
+

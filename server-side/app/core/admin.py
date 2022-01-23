@@ -28,3 +28,6 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Progress)
+admin.site.register(models.Transcript)
+admin.site.register(models.Course)
+admin.site.register(models.CourseGrade)
