@@ -1,3 +1,4 @@
+from atexit import register
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from core import models
@@ -8,7 +9,8 @@ class UserAdmin(BaseUserAdmin):
     list_display = ['email', 'name']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('name','role', 'date_of_birth', 'phone_number', 'gender', 'city')}),
+        (_('Personal Info'), {'fields': ('name','role', 'date_of_birth', 'phone_number', 'gender',
+         'identity_card_number', 'parent_name', 'place_of_birth', 'address', 'country', 'nationality', 'settlement')}),
         (
             _('Permissions'),
             {
@@ -26,3 +28,6 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Progress)
+admin.site.register(models.Transcript)
+admin.site.register(models.Course)
+admin.site.register(models.CourseGrade)
