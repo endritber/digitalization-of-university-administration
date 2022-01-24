@@ -166,6 +166,7 @@ class PrivateUserApiTests(TestCase):
             country='Kosove',
             nationality='Shqiptar',
             settlement='Prishtine',
+            is_active=True
 
         )
             
@@ -193,6 +194,7 @@ class PrivateUserApiTests(TestCase):
             'country':self.user.country,
             'nationality':self.user.nationality,
             'settlement':self.user.settlement,
+            'is_active':self.user.is_active
         })
     
     def test_post_me_not_allowed(self):

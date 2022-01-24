@@ -71,13 +71,13 @@ class PrivateProgressApiTests(TestCase):
         ).exists()
         self.assertTrue(exists)
 
-    # def test_create_progress_invalid(self):
-    #     """Test creating a new progress with invalid payload"""
-    #     user = get_user_model().objects.create_user(
-    #         'stud@university.com',
-    #         'testpass123',
-    #         3,
-    #     )
-    #     payload = {'department':''}
-    #     res = self.client.post(PROGRESS_URL, payload)
-    #     self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_create_progress_invalid(self):
+        """Test creating a new progress with invalid payload"""
+        user = get_user_model().objects.create_user(
+            'stud@university.com',
+            'testpass123',
+            3,
+        )
+        payload = {'department':'', 'user':user.id}
+        res = self.client.post(PROGRESS_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
