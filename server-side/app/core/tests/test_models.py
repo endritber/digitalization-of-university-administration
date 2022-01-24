@@ -17,7 +17,8 @@ class ModelTests(TestCase):
         password = 'Testpass123'
         user = get_user_model().objects.create_user(
             email = email,
-            password = password
+            password = password,
+            role = 1
         )
 
         self.assertEqual(user.email, email)
@@ -58,3 +59,45 @@ class ModelTests(TestCase):
             level='Bachelor'
         )
         self.assertEqual(str(progress), progress.user.email + " | Academic Progress")
+
+    def test_transcript_student_created(self):
+        """Test that a transcript is created when a progress is created"""
+        user = get_user_model().objects.create_user(
+            email='test@gmail.com',
+            name='test123',
+            role=1
+        )
+        progress = models.Progress.objects.create(
+            user=user,
+            department='CSE',
+            level='Bachelor'
+        )
+        transcript = models.Transcript.objects.get(user=user)
+        self.assertEqual(str(transcript), transcript.user.email + "'s Transcript")
+    
+    def test_grade_added_to_progress(self):
+        user = get_user_model().objects.create_user(
+            email='test@gmail.com',
+            name='test123',
+            role=3
+        )
+        progress = models.Progress.objects.create(
+            user=user,
+            department='CSE',
+            level='Bachelor'
+        )
+
+        course = models.Course.objects.create(
+            course_code = 'code',
+            course_name = 'course',
+            ects = 5,
+            category='Obligative'
+        )
+        grade = models.CourseGrade.objects.create(
+            grade = 10,
+            course = course,
+            user = user
+        )
+        transcript = models.Transcript.objects.get(user=user)
+        the_grade = transcript.grade_courses.all()
+        self.assertIn(grade, the_grade)
