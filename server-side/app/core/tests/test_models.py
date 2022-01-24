@@ -1,8 +1,7 @@
-from multiprocessing.sharedctypes import Value
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
-
+from unittest.mock import patch
 
 def sample_user(email='student@university.com', password='student12345'):
     """Create a sample user for authorization"""
@@ -101,3 +100,13 @@ class ModelTests(TestCase):
         transcript = models.Transcript.objects.get(user=user)
         the_grade = transcript.grade_courses.all()
         self.assertIn(grade, the_grade)
+
+    @patch('uuid.uuid4')
+    def test_user_file_name_uuid(self, mock_uuid):
+        """Test that image is saved in the correct location"""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.user_image_file_path(None, 'myimage.jpg')
+        exp_path = f'uploads/user/{uuid}.jpg'
+
+        self.assertEqual(file_path, exp_path)

@@ -3,6 +3,16 @@ from django.contrib.auth.models import (AbstractBaseUser,
                          BaseUserManager, PermissionsMixin)
 from django.conf import settings
 from django.forms import ValidationError
+import uuid
+import os
+
+def user_image_file_path(instance, filename):
+    """Generete file path for the new recipe image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads/user/', filename)
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, date_of_birth=None,
@@ -66,6 +76,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     nationality = models.CharField(max_length=255, blank=True, null=True)
     settlement = models.CharField(max_length=255, blank=True,null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
+    image = models.ImageField(null=True, upload_to=user_image_file_path)
     
     objects = UserManager()
     USERNAME_FIELD = 'email'
