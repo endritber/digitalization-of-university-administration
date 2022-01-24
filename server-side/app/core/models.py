@@ -5,11 +5,9 @@ from django.conf import settings
 from django.forms import ValidationError
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, role=None, date_of_birth =None,
-    phone_number = None,
-    gender = None,
-    identity_card_number=None, parent_name=None, place_of_birth=None,
-    address=None, country=None, nationality=None, settlement=None, **extra_fields):
+    def create_user(self, email, password=None, role=None, date_of_birth=None,
+    phone_number=None, gender=None, identity_card_number=None, parent_name=None,
+    place_of_birth=None, address=None, country=None, nationality=None, settlement=None, **extra_fields):
         """
         Creates and saves a new user
         """
@@ -82,8 +80,8 @@ class Course(models.Model):
         return self.course_code + ' | '+self.course_name
 
 class CourseGrade(models.Model):
-    grade = models.IntegerField(null=True, blank=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    grade = models.IntegerField()
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -98,13 +96,14 @@ class CourseGrade(models.Model):
                 t.grade_courses.add(CourseGrade.objects.get(id=self.id))
                 t.save()
             except:
-                raise ValidationError('You are trying to add a grade to a student without transcript or to a non student. Make sure the administrator has added a progress for this student.')
+                raise ValidationError('You are trying to add a grade to a student without transcript or to a non student. \
+                      Make sure the administrator has added a progress for this student.')
 
 
 class Transcript(models.Model):
     grade_courses = models.ManyToManyField(CourseGrade, related_name='grade_courses')
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
-    on_delete=models.CASCADE, null=True, blank=True
+    on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -113,8 +112,8 @@ class Transcript(models.Model):
 
 class Progress(models.Model):
     """Progress to be used for a student"""
-    level = models.CharField(max_length=255, null=True, blank=True)
-    department = models.CharField(max_length=255, null=True, blank=True)
+    level = models.CharField(max_length=255)
+    department = models.CharField(max_length=255)
     transcript = models.OneToOneField(Transcript, on_delete=models.CASCADE, null=True, blank=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE,
@@ -128,11 +127,9 @@ class Progress(models.Model):
                 t.save()
                 p = Progress.objects.get(id=self.id)
                 p.transcript = Transcript.objects.get(user=self.user)
-                print(p.transcript)
                 p.save()
             except IntegrityError:
                 pass
-
 
     def __str__(self):
         return self.user.email + " | Academic Progress"

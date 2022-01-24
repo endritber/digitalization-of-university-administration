@@ -2,25 +2,38 @@ from .serializers import UserSerializer, AuthTokenSerializer
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
-from user.permissions import AdministratorOrReadOnly, AdministratorOrStudentReadOnly
+from user.permissions import AdministratorOrReadOnly, AdministratorOrStudentReadOnly, ProfessorPermission
 from django.contrib.auth import get_user_model
 
-class CreateUserView(generics.ListCreateAPIView):
+class CreateUserView(generics.CreateAPIView):
     """
     Create a new user in the system
     """
     serializer_class = UserSerializer
-    queryset = get_user_model().objects.exclude(role=1).exclude(role=None).order_by('role')
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, AdministratorOrReadOnly)
 
+class ListUserView(generics.ListAPIView):
+    """
+    Create a new user in the system
+    """
+    serializer_class = UserSerializer
+    queryset = get_user_model().objects.exclude(role=1).exclude(role=None).exclude(role=2).order_by('role')
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated, ProfessorPermission)
 
-class RetrieveUserView(generics.RetrieveUpdateAPIView):
+
+class RetrieveUpdateUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, AdministratorOrReadOnly)
     queryset = get_user_model().objects.exclude(role=1).exclude(role=None).order_by('role')
 
+class RetrieveUserView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated, ProfessorPermission)
+    queryset = get_user_model().objects.exclude(role=1).exclude(role=None).order_by('role')
 
 
 class CreateTokenView(ObtainAuthToken):

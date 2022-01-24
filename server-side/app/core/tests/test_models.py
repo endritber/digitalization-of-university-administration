@@ -57,6 +57,4 @@ class ModelTests(TestCase):
             department='CSE',
             level='Bachelor'
         )
-        print(str(progress))
-        print(progress.user.email+ " | Academic Progress")
         self.assertEqual(str(progress), progress.user.email + " | Academic Progress")
