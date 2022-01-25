@@ -1,4 +1,4 @@
-# Digitalization of University Administration [![start with why](https://img.shields.io/badge/%20UnitTests-passing%3F-green.svg?style=flat)](http://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action)
+# Digitalization of University Administration [![start with why](https://img.shields.io/badge/%20UnitTests-passing%3F-green.svg?style=flat)](https://memegenerator.net/instance/64653922/success-kid-all-unit-tests-passed)
 
 DUA is a web-based solution which covers some aspects of universities. It is developed for conducting, monitoring & analyzing activities of the University.
 #
