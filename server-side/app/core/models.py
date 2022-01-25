@@ -1,8 +1,16 @@
 from django.db import IntegrityError, models
-from django.contrib.auth.models import (AbstractBaseUser,
-                         BaseUserManager, PermissionsMixin)
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager, PermissionsMixin)
 from django.conf import settings
 from django.forms import ValidationError
+import uuid
+import os
+
+def user_image_file_path(instance, filename):
+    """Generete file path for the new recipe image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+    return os.path.join('uploads/user/', filename)
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, date_of_birth=None,
@@ -66,11 +74,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     nationality = models.CharField(max_length=255, blank=True, null=True)
     settlement = models.CharField(max_length=255, blank=True,null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
+    image = models.ImageField(null=True, upload_to=user_image_file_path)
     
     objects = UserManager()
     USERNAME_FIELD = 'email'
 
 class Course(models.Model):
+    """Course Model"""
     course_code = models.CharField(max_length=255)
     course_name = models.CharField(max_length=255)
     ects = models.IntegerField()
@@ -80,6 +90,7 @@ class Course(models.Model):
         return self.course_code + ' | '+self.course_name
 
 class CourseGrade(models.Model):
+    """CourseGrade Model"""
     grade = models.IntegerField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -97,10 +108,11 @@ class CourseGrade(models.Model):
                 t.save()
             except:
                 raise ValidationError('You are trying to add a grade to a student without transcript or to a non student. \
-                      Make sure the administrator has added a progress for this student.')
+                      Make sure the administrator has added an academic progress for this student.')
 
 
 class Transcript(models.Model):
+    """Transcript model"""
     grade_courses = models.ManyToManyField(CourseGrade, related_name='grade_courses')
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE

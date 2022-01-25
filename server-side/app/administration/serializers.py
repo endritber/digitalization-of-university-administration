@@ -1,4 +1,3 @@
-
 from core.models import Progress, Transcript, CourseGrade, Course
 from rest_framework import serializers
 
@@ -15,7 +14,6 @@ class CourseGradeSerializer(serializers.ModelSerializer):
         model=CourseGrade
         exclude=('user',)
 
-
 class TranscriptSerializer(serializers.ModelSerializer):
     """Serializer for Trancsript objects"""
     grade_courses = CourseGradeSerializer(many=True)
@@ -24,7 +22,6 @@ class TranscriptSerializer(serializers.ModelSerializer):
         exclude = ('user',)
         read_only_fields = ('id',)
 
- 
 class ProgressSerializer(serializers.ModelSerializer):
     """Serializer for Progress objects"""
     transcript = TranscriptSerializer(read_only=True)

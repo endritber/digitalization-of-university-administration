@@ -14,7 +14,7 @@ services:
           python3 manage.py runserver 0.0.0.0:8000"
     environment:
       - DB_HOST=db
-      - DB_NAME=test_app
+      - DB_NAME=app
       - DB_USER=postgres
       - DB_PASS=supersecretpassword
     depends_on:

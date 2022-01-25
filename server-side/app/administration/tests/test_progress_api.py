@@ -10,7 +10,7 @@ from core.models import Progress
 from administration.serializers import ProgressSerializer
 
 PROGRESS_URL = reverse('administration:progress-list')
-COURSE_URL = reverse('administration:course')
+COURSE_URL = reverse('administration:course-list')
 
 class PublicProgressApiTests(TestCase):
     """Test the publicly available tags API"""
@@ -183,7 +183,3 @@ class PrivateProgressApiTests(TestCase):
         COURSE_DETAIL_URL = reverse('administration:course-detail', args=[course.id])
         res = self.client.get(COURSE_DETAIL_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-
-
-
-        

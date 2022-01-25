@@ -3,6 +3,15 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'email', 'password', 'name', 'role', 'date_of_birth',
+         'phone_number', 'gender','identity_card_number','parent_name',
+          'place_of_birth', 'address', 'country', 'nationality', 'settlement', 'is_active', 'image')
+        extra_kwargs = {'password':{'write_only':True, 'min_length':8}}
+
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the users object
@@ -11,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ('id', 'email', 'password', 'name', 'role', 'date_of_birth',
          'phone_number', 'gender','identity_card_number','parent_name',
-          'place_of_birth', 'address', 'country', 'nationality', 'settlement', 'is_active')
+          'place_of_birth', 'address', 'country', 'nationality', 'settlement', 'is_active', 'image')
         extra_kwargs = {'password':{'write_only':True, 'min_length':8}}
 
     def create(self, validated_data):
@@ -62,5 +71,10 @@ class AuthTokenSerializer(serializers.Serializer):
         return attrs
 
 
-
-
+class UserImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading images to user"""
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'image')
+        read_only_fields = ('id',)
+    
