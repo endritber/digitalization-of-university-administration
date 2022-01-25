@@ -1,8 +1,7 @@
-from multiprocessing.sharedctypes import Value
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
-
+from unittest.mock import patch
 
 def sample_user(email='student@university.com', password='student12345'):
     """Create a sample user for authorization"""
@@ -10,9 +9,7 @@ def sample_user(email='student@university.com', password='student12345'):
 
 class ModelTests(TestCase):
     def test_create_user_with_email_successful(self):
-        """
-        Test creating a new user with an email is successful
-        """
+        """Test creating a new user with an email is successful"""
         email = 'test@gmail.com'
         password = 'Testpass123'
         user = get_user_model().objects.create_user(
@@ -25,25 +22,19 @@ class ModelTests(TestCase):
         self.assertTrue(user.check_password(password))
 
     def test_new_user_email_normalized(self):
-        """
-        Test the email for a new user is normalized
-        """
+        """Test the email for a new user is normalized"""
         email = 'test@gmail.com'
         user = get_user_model().objects.create_user(email, 'test123')
         
         self.assertEqual(user.email, email.lower())
 
     def test_new_user_invalid_email(self):
-        """
-        Test creating user with no email raises error
-        """
+        """Test creating user with no email raises error"""
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user(None, 'test123')
 
     def test_create_new_superuser(self):
-        """
-        Creating a new superuser
-        """
+        """Creating a new superuser"""
         user = get_user_model().objects.create_superuser(
             'test@gmail.com',
             'test123'
@@ -76,6 +67,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(transcript), transcript.user.email + "'s Transcript")
     
     def test_grade_added_to_progress(self):
+        """Test grade is added to a student progress"""
         user = get_user_model().objects.create_user(
             email='test@gmail.com',
             name='test123',
@@ -101,3 +93,13 @@ class ModelTests(TestCase):
         transcript = models.Transcript.objects.get(user=user)
         the_grade = transcript.grade_courses.all()
         self.assertIn(grade, the_grade)
+
+    @patch('uuid.uuid4')
+    def test_user_file_name_uuid(self, mock_uuid):
+        """Test that image is saved in the correct location"""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.user_image_file_path(None, 'myimage.jpg')
+        exp_path = f'uploads/user/{uuid}.jpg'
+
+        self.assertEqual(file_path, exp_path)
