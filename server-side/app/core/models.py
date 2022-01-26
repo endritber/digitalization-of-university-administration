@@ -4,6 +4,8 @@ from django.conf import settings
 from django.forms import ValidationError
 import uuid
 import os
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 def user_image_file_path(instance, filename):
     """Generete file path for the new recipe image"""
@@ -75,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     settlement = models.CharField(max_length=255, blank=True,null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
     image = models.ImageField(null=True, upload_to=user_image_file_path)
-    
+
     objects = UserManager()
     USERNAME_FIELD = 'email'
 
@@ -83,15 +85,16 @@ class Course(models.Model):
     """Course Model"""
     course_code = models.CharField(max_length=255)
     course_name = models.CharField(max_length=255)
-    ects = models.IntegerField()
+    ects = models.PositiveIntegerField(validators=[MinValueValidator(2), MaxValueValidator(6)])
     category = models.CharField(max_length=255)
 
     def __str__(self):
         return self.course_code + ' | '+self.course_name
 
+
 class CourseGrade(models.Model):
     """CourseGrade Model"""
-    grade = models.IntegerField()
+    grade = models.PositiveIntegerField(validators=[MinValueValidator(5), MaxValueValidator(10)])
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
@@ -113,7 +116,7 @@ class CourseGrade(models.Model):
 
 class Transcript(models.Model):
     """Transcript model"""
-    grade_courses = models.ManyToManyField(CourseGrade, related_name='grade_courses')
+    grade_courses = models.ManyToManyField(CourseGrade, related_name='grade_courses', blank=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE
     )
@@ -122,11 +125,21 @@ class Transcript(models.Model):
         return self.user.email + "'s Transcript"
 
 
+class Examination(models.Model):
+    """Examination model"""
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.course.course_name + "|" + self.user.name
+
+
 class Progress(models.Model):
     """Progress to be used for a student"""
     level = models.CharField(max_length=255)
     department = models.CharField(max_length=255)
     transcript = models.OneToOneField(Transcript, on_delete=models.CASCADE, null=True, blank=True)
+    exams = models.ManyToManyField(Examination, related_name='progress', blank=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE,
     )

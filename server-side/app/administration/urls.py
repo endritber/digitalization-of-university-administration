@@ -6,6 +6,8 @@ from administration import views
 router = DefaultRouter()
 router.register('progress', views.ProgressViewSet)
 router.register('course', views.CourseViewSet)
+router.register('examination', views.ExaminationViewSet)
+router.register('submitexam', views.StudentExaminationViewSet)
 
 app_name = 'administration'
 
