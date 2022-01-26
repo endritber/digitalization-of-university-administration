@@ -1,6 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.forms import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 from core import models
 from django.urls import reverse
 from django.test import TestCase
@@ -11,6 +9,7 @@ from administration.serializers import ProgressSerializer
 
 PROGRESS_URL = reverse('administration:progress-list')
 COURSE_URL = reverse('administration:course-list')
+EXAM_URL = reverse('administration:examination-list')
 
 class PublicProgressApiTests(TestCase):
     """Test the publicly available tags API"""
@@ -165,6 +164,7 @@ class PrivateProgressApiTests(TestCase):
             self.assertTrue(True)
 
     def test_list_course_and_course_detail(self):
+        """Test listing different courses and detail"""
         user = get_user_model().objects.create_user(
             'prof@university.com',
             'testpass123',
@@ -183,3 +183,60 @@ class PrivateProgressApiTests(TestCase):
         COURSE_DETAIL_URL = reverse('administration:course-detail', args=[course.id])
         res = self.client.get(COURSE_DETAIL_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_examination_list_create(self):
+        """Test creating an examination"""
+        user = get_user_model().objects.create_user(
+            email='prof@university.com',
+            password='testpass123',
+            role = 2,
+        )
+        course = models.Course.objects.create(
+            course_code = 'code',
+            course_name = 'course',
+            ects = 5,
+            category='Obligative'
+        )
+        payload = {'user':user.id, 'course':course.id}
+        res = self.client.post(EXAM_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        res2 = self.client.get(EXAM_URL)
+        self.assertEqual(res2.status_code, status.HTTP_200_OK)
+
+
+    def test_student_submitting_exam(self):
+        """Test student adding an exam"""
+        user = get_user_model().objects.create_user(
+            email='stud@university.com',
+            password='testpass123',
+            role=3
+        )
+        user2 = get_user_model().objects.create_user(
+            email='prof@university.com',
+            password ='testpass123',
+            role =2
+        )
+        progress = models.Progress.objects.create(
+            user=user2,
+            department='CSE',
+            level='Bachelor'
+        )
+        course = models.Course.objects.create(
+            course_code = 'code',
+            course_name = 'course',
+            ects = 5,
+            category='Obligative'
+        )
+        examination = models.Examination.objects.create(
+            user = user2,
+            course=course
+        )
+
+        payload = {'exams':examination.id}
+
+        SUBMIT_EXAM_URL = reverse('administration:progress-detail', args=[progress.id])
+        self.client.force_authenticate(user=user)
+        res = self.client.patch(SUBMIT_EXAM_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn(examination, progress.exams.all())
+

@@ -103,3 +103,16 @@ class ModelTests(TestCase):
         exp_path = f'uploads/user/{uuid}.jpg'
 
         self.assertEqual(file_path, exp_path)
+
+    def test_create_new_examination(self):
+        """Test examination model is created"""
+        user = get_user_model().objects.create_user(
+            email = 'prof@uni.net',
+            password = 'test1234',
+            role = 2,
+            name='Prof'
+        )
+        course = models.Course.objects.create(course_code ='test', course_name='test', ects=5, category='test')
+        models.Examination.objects.create(course=course, user=user)
+        res = models.Examination.objects.get(user=user)
+        self.assertEqual(str(res), str(course.course_name + "|"+user.name))

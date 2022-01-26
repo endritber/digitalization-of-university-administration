@@ -18,3 +18,10 @@ class ProfessorOnly(permissions.BasePermission):
             return True
         else:
             return request.method == None
+
+class StudentOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.role == 3 and request.user:
+            return True
+        else:
+            return request.method == None
