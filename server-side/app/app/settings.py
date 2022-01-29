@@ -42,11 +42,13 @@ INSTALLED_APPS = [
     'core',
     'user',
     'administration',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware'
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -134,3 +136,5 @@ STATIC_ROOT = '/vol/web/static'
 # 127.0.0.01:8000/media 
 
 AUTH_USER_MODEL = 'core.User'
+
+CORS_ORIGIN_ALLOW_ALL = True
