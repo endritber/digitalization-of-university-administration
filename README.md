@@ -5,13 +5,13 @@ DUA is a web-based solution which covers some aspects of universities. It is dev
 Server side tests:
 ```
 docker-compose run app sh -c "python3 manage.py test"
-or-without docker
+**or-without docker**
 python3 manage.py test
 ```
 #
 Server side run web-server:
 ```
 docker-compose up
-or-without docker
+**or-without docker**
 python3 manage.py runserver
 ```
