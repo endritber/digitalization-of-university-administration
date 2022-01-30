@@ -8,7 +8,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ('id', 'email', 'password', 'name', 'date_of_birth','role',
          'phone_number', 'gender','identity_card_number','parent_name',
-          'place_of_birth', 'address', 'country', 'nationality', 'settlement', 'is_active')
+          'place_of_birth', 'address', 'country', 'nationality', 'settlement', 'is_active', 'image')
         extra_kwargs = {'password':{'write_only':True, 'min_length':8}}
 
 
@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ('id', 'email', 'password', 'name','date_of_birth','role',
          'phone_number', 'gender','identity_card_number','parent_name',
-          'place_of_birth', 'address', 'country', 'nationality', 'settlement', 'is_active')
+          'place_of_birth', 'address', 'country', 'nationality', 'settlement', 'is_active', 'image')
         extra_kwargs = {'password':{'write_only':True, 'min_length':8}}
 
     def create(self, validated_data):

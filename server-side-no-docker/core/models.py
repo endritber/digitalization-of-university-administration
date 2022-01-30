@@ -3,7 +3,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager, Permi
 from django.conf import settings
 from django.forms import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from PIL import Image
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, date_of_birth=None,
@@ -67,9 +67,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     nationality = models.CharField(max_length=255, blank=True, null=True)
     settlement = models.CharField(max_length=255, blank=True,null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
+    image = models.ImageField(upload_to='profile', null=True, blank=True)
 
     objects = UserManager()
     USERNAME_FIELD = 'email'
+
+    def save(self):
+        super().save()
+        img = Image.open(self.image.path)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
 
 class Course(models.Model):
     """Course Model"""
