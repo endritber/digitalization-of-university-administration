@@ -1,0 +1,47 @@
+<table mat-table [dataSource] = "dataSource" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="number">
+    <th mat-header-cell *matHeaderCellDef>No.</th>
+    <td mat-cell *matCellDef="let element"> {{element.number}}</td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="level">
+    <th mat-header-cell *matHeaderCellDef>Level.</th>
+    <td mat-cell *matCellDef="let element"> {{element.level}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="universityDirection">
+    <th mat-header-cell *matHeaderCellDef>Direction.</th>
+    <td mat-cell *matCellDef="let element">   {{element.universityDirection}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="fCode">
+    <th mat-header-cell *matHeaderCellDef>fCode.</th>
+    <td mat-cell *matCellDef="let element"> {{element.fCode}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="billing">
+    <th mat-header-cell *matHeaderCellDef>Billed.</th>
+    <td mat-cell *matCellDef="let element"> {{element.billing}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="paid">
+    <th mat-header-cell *matHeaderCellDef>Paid.</th>
+    <td mat-cell *matCellDef="let element"> {{element.paid}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="own">
+    <th mat-header-cell *matHeaderCellDef>Own.</th>
+    <td mat-cell *matCellDef="let element"> {{element.own}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="data">
+    <th mat-header-cell *matHeaderCellDef>Date.</th>
+    <td mat-cell *matCellDef="let element"> {{element.data}}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayColumns"></tr>
+
+</table>
