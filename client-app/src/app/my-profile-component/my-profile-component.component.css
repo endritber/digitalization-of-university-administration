@@ -1,0 +1,30 @@
+
+.profileDiv{
+    display: inline-block;
+    margin-left: 300px;
+    background-color: rgb(82, 82, 79);
+    position: fixed;
+    margin-top: 10%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 15px;
+    border-radius: 15px;
+}
+.innerClass{
+    padding: 10px;
+    width: 350px;
+    background-color: rgb(226, 218, 208);
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    height: 350px;
+    border-radius: 10px;
+}
+.photo{
+    position: absolute;
+    top: 130px;
+    right: 50px;
+    background-color: rgb(255, 255, 255);
+    height: 300px;
+    width: 250px;
+    border-radius: 5px;
+}

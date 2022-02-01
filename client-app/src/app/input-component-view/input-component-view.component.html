@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="header"
+     style="font-size: 50px;
+      margin-left: 34%;
+      margin-bottom: 15%;
+      margin-top: 5%;
+       color: rgb(12, 26, 26);">Login</div>
+   <form [formGroup] = formgroup>
+       <div class="form-group">
+            <label for="email"
+            style="font-size: 25px;">Email: </label>
+            <input type="text"
+            id="email"
+            formControlName = "email"
+            class="form-control">
+              <div *ngIf="formgroup.controls['email'].touched && formgroup.controls['email'].invalid">
+              Your email is required
+              </div>
+            <label for="password"
+            style="font-size: 25px; margin-top: 50px;">Password: </label>
+            <input type="password"
+             [ngClass] = "{'invalid' : formgroup.controls['password'].value.length > 0 && formgroup.controls['password'].value.length < 5 } "
+            class="form-control"
+            id="password"
+            formControlName = "password">
+            <div *ngIf="formgroup.controls['password'].errors && formgroup.controls['password'].touched ">
+              <div *ngIf="formgroup.controls['password'].errors['required']">Your password is Required</div>
+              <div *ngIf="formgroup.controls['password'].errors['minlength'] ">Your password is too short.</div>
+            </div>
+        <button  class="btn btn-primary"
+            type="button"
+            style="margin-top: 10%;
+            margin-bottom: 4%;
+            margin-left: 185px;
+            font-size: 25px;"
+            [disabled]="formgroup.invalid"
+            (click) = "sendData(formgroup.controls['email'].value, formgroup.controls['password'].value)"
+           >Log In</button>
+        </div>
+    </form>
+</div>

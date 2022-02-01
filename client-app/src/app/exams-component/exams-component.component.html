@@ -1,0 +1,24 @@
+<div style="background-color: red; position:relative; left: 35%; top: -45%; width: 50%">
+  <table mat-table [dataSource] = "Source" class="mat-elevation-z8">
+    <ng-container matColumnDef="subjectName">
+      <th mat-header-cell *matHeaderCellDef>Subject.</th>
+      <td mat-cell *matCellDef="let element"> {{element.subjectName}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="professor">
+      <th mat-header-cell *matHeaderCellDef>Professor.</th>
+      <td mat-cell *matCellDef="let element"> {{element.professor}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="grade">
+      <th mat-header-cell *matHeaderCellDef>Grade.</th>
+
+      <td mat-cell *matCellDef="let element"> {{element.grade}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayGrades"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayGrades"></tr>
+  </table>
+
+
+</div>

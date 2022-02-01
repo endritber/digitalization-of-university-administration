@@ -1,0 +1,35 @@
+<div class="navbar fixed-top navbar-dark bg-primary"
+     style=" height: 58px; padding: 5px; margin-bottom: 50px;">
+        <h1 style="margin-left: 30px; display: inline; color: white"><strong> University Name</strong></h1>
+        <h2 style="display: inline; margin-left: 70%; color: white; position: fixed"> email@example.com</h2>
+</div>
+
+<div class="list-group" style="display: inline-block; width: 30%; background-color: rgb(59, 59, 59); padding: 10px; margin-top: 7% ">
+    <a routerLink='studentProfile' class="list-group-item list-group-item-action" sr >
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="mb-1"><strong>My Profile</strong></h1>
+        </div>
+        <p class="mb-1"><i>Your personal dashboard information</i></p>
+      </a>
+      <br>
+      <a  routerLink='payments' class="list-group-item list-group-item-action " >
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="mb-1"><strong>Payments</strong></h1>
+        </div>
+        <p class="mb-1"><i>Your transactions and monthly payments</i></p>
+      </a>
+      <br>
+      <a routerLink='exams' class="list-group-item list-group-item-action " >
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="mb-1"><strong>My Exams</strong></h1>
+        </div>
+        <p class="mb-1"><i>Your upcoming exams</i></p>
+      </a>
+      <br>
+      <a  class="list-group-item list-group-item-action" style="margin-top: 96px;" >
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="mb-1"><strong>Log Out</strong></h1>
+        </div>
+      </a>
+</div>
+    <router-outlet></router-outlet>
